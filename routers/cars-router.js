@@ -34,62 +34,64 @@ router.get('/:id', validateCarId(), async (req, res, next) => {
 });
 
 router.post('/', validateCarInfo(), async (req, res, next) => {
-    try{
-        const payload= {
-            VIN: req.body.VIN,
-            MAKE: req.body.MAKE,
-            MODEL: req.body.MODEL,
-            MILEAGE: req.body.MILEAGE,
-            YEAR: req.body.YEAR,
-            PRICE: req.body.PRICE
-        };
+  try{
+      const payload= {
+          VIN: req.body.VIN,
+          MAKE: req.body.MAKE,
+          MODEL: req.body.MODEL,
+          MILEAGE: req.body.MILEAGE,
+          YEAR: req.body.YEAR,
+          PRICE: req.body.PRICE
+      };
 
-        // translates to `INSERT INTO "accounts" ("name", "budget") VALUES (?, ?);`
+      // translates to `INSERT INTO "accounts" ("name", "budget") VALUES (?, ?);`
 
-        // 1. This SQL method also returns an array, so we want to specify using the
-        // `first` keyword to return to us the exact object in the array
+      // 1. This SQL method also returns an array, so we want to specify using the
+      // `first` keyword to return to us the exact object in the array
 
-        // 2. This SQL method returns the id of the created post
-        // therefore we want to make another axios call to db to retreive 
-        // newly created post.
+      // 2. This SQL method returns the id of the created post
+      // therefore we want to make another axios call to db to retreive 
+      // newly created post.
 
-        const [newCar]= await db('cars').insert(payload);
-        const getNewCar= await db('cars').where('id', newCar).first();
+      const [newCar]= await db('cars').insert(payload);
+      const getNewCar= await db('cars').where('id', newCar).first();
 
-        res.status(201).json(getNewCar);
-
-    } catch(err){
-        console.log('Error creating car:', err);
-        next(err);
-    };
+      res.status(201).json(getNewCar);
+  } catch(err){
+      console.log('Error creating car:', err);
+      next(err);
+  };
 });
 
-router.put('/:id', validateCarInfo(), validateCarId(), async (req, res, next) => {
+
+                    // for || to work need to remove req.body validator
+router.put('/:id', /*validateCarInfo()*/ validateCarId(), async (req, res, next) => {
+    // console.log(req.car);
     try{
-        const payload= {
-            VIN: req.body.VIN,
-            MAKE: req.body.MAKE,
-            MODEL: req.body.MODEL,
-            MILEAGE: req.body.MILEAGE,
-            YEAR: req.body.YEAR,
-            PRICE: req.body.PRICE,
-            TRANSMISSION_TYPE: req.body.TRANSMISSION_TYPE,
-            TITLE: req.body.TITLE
-        };
+      // console.log(req.car);
+      const payload= {
+          VIN: req.body.VIN || req.car.VIN, // originates from id validator req.user object
+          MAKE: req.body.MAKE || req.car.MAKE,
+          MODEL: req.body.MODEL || req.car.MODEL,
+          MILEAGE: req.body.MILEAGE || req.car.MILEAGE,
+          YEAR: req.body.YEAR || req.car.YEAR,
+          PRICE: req.body.PRICE || req.car.PRICE,
+          TRANSMISSION_TYPE: req.body.TRANSMISSION_TYPE || req.car.TRANSMISSION_TYPE,
+          TITLE: req.body.TITLE || req.car.TITLE
+      };
 
-        // translates to `UPDATE "cars" SET "transmission_type" = ? AND "title" = ? WHERE "id" = ?;`
+      // translates to `UPDATE "cars" SET "transmission_type" = ? AND "title" = ? WHERE "id" = ?;`
 
-        // 1. This SQL method will return the `count` 
-        // example: `1` of what object/data was updated
+      // 1. This SQL method will return the `count` 
+      // example: `1` of what object/data was updated
 
-        await db('cars').where('id', req.params.id).update(payload);
-        const updatedCar= await db('cars').where('id', req.params.id).first();
-        res.json(updatedCar);
-        
-    } catch(err){
-        console.log('Error updating:', err);
-        next(err);
-    };
+      await db('cars').where('id', req.params.id).update(payload);
+      const updatedCar= await db('cars').where('id', req.params.id).first();
+      res.json(updatedCar); 
+  } catch(err){
+      console.log('Error updating:', err);
+      next(err);
+  };
 });
 
 router.delete('/:id', validateCarId(), async (req, res, next) => {
@@ -126,7 +128,7 @@ function validateCarId() {
         next(err);
       }
     }
-}
+};
 
 // validates object is being sent correctly
 function validateCarInfo() {
@@ -163,6 +165,6 @@ function validateCarInfo() {
         next();
       }
     }
-}
+};
 
 module.exports= router;

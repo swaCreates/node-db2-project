@@ -7,16 +7,16 @@ exports.up = async function(knex) {
       table.text('VIN').notNull().unique();
       table.text('MAKE').notNull();
       table.text('MODEL').notNull();
-      table.integer('YEAR').notNull(); // should be notNull()
+      table.integer('YEAR').notNull(); 
       table.integer('MILEAGE').notNull();
-      table.text('PRICE').notNull(); // should be notNull()
+      table.text('PRICE').notNull(); 
       table.text('TRANSMISSION_TYPE');
       table.text('TITLE');
     });
   };
   
   exports.down = async function(knex) {
-      await knex.schema.dropTableIfExists('cars');
+    await knex.schema.dropTableIfExists('cars');
   };
   
   // after writing the tables above, run the command `npx knex migrate:latest` to create 
