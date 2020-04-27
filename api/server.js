@@ -2,6 +2,7 @@ const express= require('express');
 const helmet= require('helmet');
 
 const welcome_router= require('../routers/welcome-router.js');
+const cars_router= require('../routers/cars-router.js');
 
 const server= express();
 
@@ -12,6 +13,7 @@ server.use(helmet());
 
 // route handlers
 server.use(welcome_router);
+server.use('/api/cars',cars_router);
 
 
 // when there is no route, handler

@@ -7,10 +7,10 @@ exports.up = async function(knex) {
       table.text('VIN').notNull().unique();
       table.text('MAKE').notNull();
       table.text('MODEL').notNull();
-      table.integer('YEAR');
+      table.integer('YEAR').notNull(); // should be notNull()
       table.integer('MILEAGE').notNull();
-      table.text('PRICE');
-      table.text('TRANSMISSION TYPE');
+      table.text('PRICE').notNull(); // should be notNull()
+      table.text('TRANSMISSION_TYPE');
       table.text('TITLE');
     });
   };
